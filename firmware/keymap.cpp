@@ -113,7 +113,24 @@ KeyCode KeyMap::getKeyCode(InputMode mode, int idx)
     case InputMode::ALPHABET:
         return KeyCode{0, {0, static_cast<uint8_t>(KEY_A + idx)}, false, false};
     case InputMode::KANA:
-        return KeyCode{0, {idx < 5 ? (uint8_t)0x00 : consonants[idx / 5], vowols[idx % 5]}, false, false};
+        if (idx / 5 == 9)
+        {
+            switch (idx % 5)
+            {
+            case 0: // WA
+                return KeyCode{0, {KEY_A + 22, KEY_A}, false, false};
+            case 2: // WO
+                return KeyCode{0, {KEY_A + 22, KEY_A + 14}, false, false};
+            case 4: // NN
+                return KeyCode{0, {KEY_A + 13, KEY_A + 13}, false, false};
+            default:
+                break;
+            }
+        }
+        else
+        {
+            return KeyCode{0, {idx < 5 ? (uint8_t)0x00 : consonants[idx / 5], vowols[idx % 5]}, false, false};
+        }
     case InputMode::KANJI:
         return KeyCode{sakanaCodes[idx / 5][idx % 5], {0, 0}, true, false};
     default:
