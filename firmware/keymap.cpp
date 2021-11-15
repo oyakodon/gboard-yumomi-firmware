@@ -90,22 +90,28 @@ KeyCode KeyMap::getKeyCode(InputMode mode, int idx)
 {
     static uint8_t vowols[5] = {
         KEY_A,
-        KEY_A + 8,  // I
-        KEY_A + 20, // U
-        KEY_A + 4,  // E
-        KEY_A + 14, // O
+        KEY_I,
+        KEY_U,
+        KEY_E,
+        KEY_O,
     };
-    static uint8_t consonants[10] = {
+    static uint8_t consonants[9] = {
         KEY_A,
-        KEY_A + 10, // K
-        KEY_A + 18, // S
-        KEY_A + 19, // T
-        KEY_A + 13, // N
-        KEY_A + 7,  // H
-        KEY_A + 12, // M
-        KEY_A + 24, // Y
-        KEY_A + 17, // R
-        KEY_A + 22, // W
+        KEY_K, // K
+        KEY_S, // S
+        KEY_T, // T
+        KEY_N, // N
+        KEY_H, // H
+        KEY_M, // M
+        KEY_Y, // Y
+        KEY_R, // R
+    };
+    static uint8_t row_wa[5][2] = {
+        {KEY_W, KEY_A},    // わ
+        {0x00, KEY_COMMA}, // 、 (,)
+        {KEY_W, KEY_O},    // を
+        {0x00, KEY_DOT},   // 。 (.)
+        {KEY_N, KEY_N},    // ん
     };
 
     switch (mode)
@@ -113,24 +119,11 @@ KeyCode KeyMap::getKeyCode(InputMode mode, int idx)
     case InputMode::ALPHABET:
         return KeyCode{0, {0, static_cast<uint8_t>(KEY_A + idx)}, false, false};
     case InputMode::KANA:
-        if (idx / 5 == 9)
-        {
-            switch (idx % 5)
-            {
-            case 0: // WA
-                return KeyCode{0, {KEY_A + 22, KEY_A}, false, false};
-            case 2: // WO
-                return KeyCode{0, {KEY_A + 22, KEY_A + 14}, false, false};
-            case 4: // NN
-                return KeyCode{0, {KEY_A + 13, KEY_A + 13}, false, false};
-            default:
-                break;
-            }
-        }
-        else
+        if (idx / 5 < 9)
         {
             return KeyCode{0, {idx < 5 ? (uint8_t)0x00 : consonants[idx / 5], vowols[idx % 5]}, false, false};
         }
+        return KeyCode{0, {row_wa[idx % 5][0], row_wa[idx % 5][1]}, false, false};
     case InputMode::KANJI:
         return KeyCode{sakanaCodes[idx / 5][idx % 5], {0, 0}, true, false};
     default:
